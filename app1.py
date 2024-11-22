@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import pickle
+import joblib
 
 # Title
 st.title("Home Price Prediction using Machine Learning")
@@ -87,9 +88,14 @@ def load_model(filename):
 
 # Load saved models
 
-# Load Random forest 
 with open('rf_r.pkl', 'rb') as model_file:
-    rf_model = pickle.load(model_file)
+    rf_model = joblib.load(model_file)
+
+# Load Random forest 
+
+'''test'''
+# with open('rf_r.pkl', 'rb') as model_file:
+#     rf_model = pickle.load(model_file)
 # Assign model to variable
 random_forest_model_prediciton = rf_model.predict(df)[0]
 # Button to predict model
