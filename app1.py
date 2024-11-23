@@ -87,15 +87,15 @@ def load_model(filename):
 
 # Load saved models
 
-# # Load Random forest 
-# with open('rf_r.pkl', 'rb') as model_file:
-#     rf_model = pickle.load(model_file)
-# # Assign model to variable
-# random_forest_model_prediciton = rf_model.predict(df)[0]
-# # Button to predict model
-# if st.button("Random Forest Model Prediction"):
-#     # Output model results
-#     st.session_state.predictions["Random Forest"] = f"Predicted Median Value of House is: ${random_forest_model_prediciton:.2f}"
+# Load Random forest 
+with open('rf_r.pkl', 'rb') as model_file:
+    rf_model = pickle.load(model_file)
+# Assign model to variable
+random_forest_model_prediciton = rf_model.predict(df)[0]
+# Button to predict model
+if st.button("Random Forest Model Prediction"):
+    # Output model results
+    st.session_state.predictions["Random Forest"] = f"Predicted Median Value of House is: ${random_forest_model_prediciton:.2f}"
 
 
 # Decision Tree model
