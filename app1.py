@@ -3,7 +3,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import onnxruntime as rt
-# from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
 
 # Title
