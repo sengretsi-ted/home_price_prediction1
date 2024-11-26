@@ -3,7 +3,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import onnxruntime as rt
-# from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
 
 # Title
@@ -56,16 +55,8 @@ dtSF = st.number_input("Enter the Distance to San Francisco: ")
 data.append(dtSF)
 
 # Convert input data to DataFrame
-df = pd.DataFrame(data)
-data = np.array(df).reshape(1, -1)
-df = pd.DataFrame(data)
-
-# df.columns = [
-#     "Median Income", "Median Age", "Total Rooms", "Total Bedrooms",
-#     "Population", "Households", "Latitude", "Longitude",
-#     "Distance to Coast", "Distance to LA", "Distance to San Diego",
-#     "Distance to San Jose", "Distance to San Francisco"
-# ]
+df = pd.DataFrame(data).T
+df = df.astype(np.float32)
 
 # Model predictions
 st.title("Model Options")
@@ -73,17 +64,6 @@ st.title("Model Options")
 # Initialize session state to store results
 if "predictions" not in st.session_state:
     st.session_state.predictions = {}
-
-# Function to load ONNX model and predict
-def predict_with_onnx(model_path, input_data):
-    # Load ONNX model
-    session = rt.InferenceSession(model_path)
-    # Get input name
-    input_name = session.get_inputs()[0].name
-    # Predict
-    prediction = session.run(None, {input_name: input_data.astype(np.float32)})[0]
-    # Convert prediction to a scalar float value
-    return float(prediction[0])
 
 # Models and paths
 models = {
@@ -94,18 +74,25 @@ models = {
     "Linear Regression": "lr_r.onnx"
 }
 
-# Generate buttons for each model
+# Generate buttons for each model and make predictions
 for model_name, model_path in models.items():
     if st.button(f"{model_name} Prediction"):
-        # Convert the prediction to a scalar
-        prediction = predict_with_onnx(model_path, df.to_numpy())
-        # Format and store the prediction in session state
-        st.session_state.predictions[model_name] = f"Predicted Median Value of House is: ${prediction:.2f}"
+        # Load the ONNX model
+        session = rt.InferenceSession(model_path)
+        # Get input name
+        input_name = session.get_inputs()[0].name
+        # Make prediction
+        prediction = session.run(None, {input_name: df.to_numpy()})[0]
+        # Convert prediction to a scalar float value
+        prediction_value = float(prediction[0])
+        # Store the prediction in session state
+        st.session_state.predictions[model_name] = f"Predicted Median Value of House is: ${prediction_value:.2f}"
 
 # Display predictions
 st.title("Model Predictions")
 for model_name, result in st.session_state.predictions.items():
     st.write(f"{model_name}: {result}")
+
 
 
 
